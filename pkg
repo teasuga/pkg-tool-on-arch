@@ -12,17 +12,23 @@ help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
 
+trap 'exit 0' 1 2 3 15
+
 operate='-S'
-while getopts lr o; do
+formats="name#repo ver"
+opts= # passed either to pacman or pkgfile
+while getopts lrf: o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
+	f) # look above function "format_info".
+		formats="$OPTARG"
+	;;
 	*) help;;
 	esac
 done
 shift `expr $OPTIND - 1`
 
-formats="name#repo ver"
 kind=$1; shift || help 1
 
 OPTIND=1
@@ -31,17 +37,11 @@ case "$kind" in
 installed)
 	cat=/bin/cat
 	copy=
-	formats="name#version"
 	operate='-Q'
-	while getopts :nvdCf: o ; do
+	while getopts :nvdC o ; do
 		case "$o" in
 		C) #copy to clip board by using xsel.
 		   copy=1 cat=
-		;;
-		f)
-		# shell-syntaxize args. In func "format_info", each one passed to awk, and remove its section name by sed.
-		# look above function "format_info".
-			formats="$formats $OPTARG"
 		;;
 		# Below is short cuts to add $formats.
 		v) formats="$formats Version" ;;
@@ -54,7 +54,6 @@ installed)
 	done | ${cat:-xsel -i -b}
 exit 0;;
 remove)
-	opts=
 	while getopts :-: opt; do
 		case "$opt" in
 		-) opts="$opts --$OPTARG";;
@@ -115,14 +114,13 @@ edit)
 exit 0;;
 match)
 	SYNOPSIS="match [-snv] pacmans_arg..."
-	formats="name ver"
 	opts=-s
 	while getopts :snv-: o; do
 		case "$o$OPTARG" in
-			s) opts="-s"; formats="name ver
+			s) formats="name ver
 	description";;
-			n) opts="-s"; formats="$format name";;
-			v) opts="-s"; formats="$format ver";;
+			n) formats="$format name";;
+			v) formats="$format ver";;
 			h) echo >&2 "$SYNOPSIS"; exit 1;;
 			-) opts="$opts --$OPTARG";;
 			*) opts="$opts -$OPTARG";;
@@ -138,17 +136,23 @@ match)
 	done
 exit 0;;
 own)
+	while getopts :-: o ; do
+		case "$o" in
+		-) opts="$opts --$o";;
+		*) opts="$opts -$o";;
+		esac
+	done; shift `expr $OPTIND - 1`
 	for f in "$@"; do
 		if test "x-Q" = "x${operate}"; then
 		### default using pacman
-			pacman -Qo "$f"
+			pacman -Q $opts "$f"
 		else
-			pkgfile "$f"
+			pkgfile $opts "$f"
 		fi
 	done
 exit 0;;
 contain)
-	opt= opts=
+	opt=
 	while getopts :S-: opt; do
 		case "$opt" in
 		S) echo "S not supported." >&2; exit 1;; # dummy for getting other pacman opts.

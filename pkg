@@ -1,0 +1,198 @@
+#!/bin/sh
+
+#fix this line if move to a system.
+func_home="`dirname '$0'`"
+
+. "$func_home/format_info.sh"
+
+# change this to your like.
+script_home="$HOME/scripts"
+
+help() {
+	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
+}
+
+operate='-S'
+while getopts lr o; do
+	case "$o" in
+	r) operate='-S';;
+	l) operate='-Q';;
+	*) help;;
+	esac
+done
+shift `expr $OPTIND - 1`
+
+formats="name#repo ver"
+kind=$1; shift || help 1
+
+OPTIND=1
+
+case "$kind" in
+installed)
+	cat=/bin/cat
+	copy=
+	formats="name#version"
+	operate='-Q'
+	while getopts :nvdCf: o ; do
+		case "$o" in
+		C) #copy to clip board by using xsel.
+		   copy=1 cat=
+		;;
+		f)
+		# shell-syntaxize args. In func "format_info", each one passed to awk, and remove its section name by sed.
+		# look above function "format_info".
+			formats="$formats $OPTARG"
+		;;
+		# Below is short cuts to add $formats.
+		v) formats="$formats Version" ;;
+		n) formats="$formats Name";;
+		d) formats="$formats Build";;
+		esac
+	done; shift `expr $OPTIND - 1`
+	for f in "$@" ; do
+		eval 'pacman ${operate} -ii "$f" | format_info '"$formats"
+	done | ${cat:-xsel -i -b}
+exit 0;;
+remove)
+	opts=
+	while getopts :-: opt; do
+		case "$opt" in
+		-) opts="$opts --$OPTARG";;
+		*) opts="$opts -$OPTARG";;
+		esac
+	done; shift `expr $OPTIND - 1`
+
+	eval "exec pacman -R $opts "'"$@"'
+exit 0;;
+create)
+	careful= reporting= installing= builddir=
+	makepkg_opts=-srCf
+	prepare_installing=''
+	install_pkg='/bin/makepkg -i' #'/bin/sudo /bin/pacman -U "$@"'
+	while getopts :o:ibn o; do
+		case "$o" in
+		n) noconfirm=--noconfirm;;
+		b) builddir=1;;
+		o) makepkg_opts=$OPTARG;;
+		i) installing=1;;
+		*) echo "[-o MAKEPKG_OPTS_EVALED_LATER] [-e]"; exit 1;;
+		esac
+	done; shift `expr $OPTIND - 1`
+	for p in "$@"
+	do
+		test -z "$builddir" || export BUILDDIR="$script_home/$p/build"
+		cd "$script_home/$p"
+		tar -cf "$p".tar.zst "$p"
+		cat << EOL > PKGBUILD
+pkgname=mytool-$p
+pkgver=1
+pkgrel=1
+source=($p.tar.zst)
+arch=(any)
+url=
+desc=
+depends=()
+
+package() {
+EOL
+		cat << EOL >> PKGBUILD
+	install -m755 -Dt "\$pkgdir/usr/local/bin" $p
+}
+EOL
+		updpkgsums
+		eval "makepkg $makepkg_opts"
+	done
+	test -n "$installing" || exit 0
+	for n in "$@"; do
+		cd "$script_home/$n"
+		eval "$install_pkg $noconfirm"
+	done
+exit 0;;
+edit)
+	for p in "$@"; do
+		$EDITOR "$script_home/$p/$p"
+	done
+exit 0;;
+match)
+	SYNOPSIS="match [-snv] pacmans_arg..."
+	formats="name ver"
+	opts=-s
+	while getopts :snv-: o; do
+		case "$o$OPTARG" in
+			s) opts="-s"; formats="name ver
+	description";;
+			n) opts="-s"; formats="$format name";;
+			v) opts="-s"; formats="$format ver";;
+			h) echo >&2 "$SYNOPSIS"; exit 1;;
+			-) opts="$opts --$OPTARG";;
+			*) opts="$opts -$OPTARG";;
+		esac
+	done; shift `expr $OPTIND - 1`
+
+	for r in "$@"
+	do
+		for p in `pacman ${operate} -q $opts "$r"`
+		do
+			pacman ${operate} -ii "$p" | format_info "$formats"
+		done
+	done
+exit 0;;
+own)
+	for f in "$@"; do
+		if test "x-Q" = "x${operate}"; then
+		### default using pacman
+			pacman -Qo "$f"
+		else
+			pkgfile "$f"
+		fi
+	done
+exit 0;;
+contain)
+	opt= opts=
+	while getopts :S-: opt; do
+		case "$opt" in
+		S) echo "S not supported." >&2; exit 1;; # dummy for getting other pacman opts.
+		-) opts="$opts --$OPTARG";;
+		*) opts="$opts -$OPTARG";;
+		esac
+		opts="$opts -$OPTARG"
+	done; shift ` expr $OPTIND - 1`
+	for f in "$@"; do
+		if test "x-Q" = "x${operate}"; then
+		### default using pacman
+			pacman -Ql $opts "$f"
+		else
+			pkgfile -l $opts "$f"
+		fi
+	done
+exit 0;;
+info)
+	verbose= operate=-S
+	while getopts :v o ; do
+		case "$o" in
+		v)   verbose=-i;;
+		esac
+	done; shift `expr $OPTIND - 1`
+			
+	for f in "$@"
+	do
+		pacman $operate -i $verbose "$f"
+	done
+exit 0;;
+v*) kind=version;;
+s*) kind='repo/name version';; # short format.
+u*) kind=url;;
+p*) kind=packager;;
+*)  : ;;
+esac
+
+while getopts :-: o ; do
+	case "$o" in
+	-) opts="$opts --$OPTARG";;
+	*) opts="$opts -$OPTARG";;
+	esac
+done; shift `expr $OPTIND - 1 `
+
+for p in "$@"; do
+	pacman ${operate} -ii $opts "$p" | format_info "$kind"
+done

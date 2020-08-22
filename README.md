@@ -41,7 +41,7 @@ $ pkg -l info -v linux # do 'pacman -Qi -i linux'
 
 $ pkg info linux # do 'pacman -Si linux'
 
-$ pkg -l -f'name#repo ver' linux # from pacman -Qii linux
+$ pkg -l 'name#repo ver' linux # from pacman -Qii linux
 
 linux#core 5.8.1.arch1-1
 

@@ -137,7 +137,7 @@ own)
 	for f in "$@"; do
 		if test "x-Q" = "x${operate}"; then
 		### default using pacman
-			pacman -Q $opts "$f"
+			pacman -Q $opts -o "$f"
 		else
 			pkgfile $opts "$f"
 		fi

@@ -2,7 +2,13 @@
 
 for my tool 'pkg'.
 
-# How to use
+## Files
+  1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
+  2. format_info.sh (get stdout of pacman, and only print sections specified on command line.)
+
+## How to use
+
+\# global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Create a script on $script_home, and edit with $EDITOR.
 
@@ -12,20 +18,27 @@ $ pkg edit A_NAME
 
 $ pkg create [-i] [-oMAKEPKG_OPTIONS] A_NAME
 
-## Print formatted description of a package. -l for local packages, -r for remotely packages.
+## Print formatted description of a package.
 
-$ pkg [-l|-r] 'SECTIONS' A_NAME # sections in one line from pacman's output
+\# global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
 
-$ pkg [-l|-r] info [-v] A_NAME # pacman $operate -i $verbosely A_NAME
+$ pkg [-fFORMAT] match REGEX... # search packages by regex and format info
 
-$ pkg [-l|-r] v A_NAME # version only
+$ pkg 'SECTIONS' PACKAGE... # like -f option, but sections in one line from pacman's output
 
-$ pkg [-l|-r] s A_NAME # short format (Name Version)
+$ pkg v PACKAGE... # like -v option, but version only
 
-$ pkg [-l|-r] p A_NAME # packager only
+$ pkg s PACKAGE... # like -s option, but "Name Version" only
 
-$ pkg [-l|-r] [-f FORMAT]  match REGEX... # search by regex and format info
+$ pkg p PACKAGE... # like them, but packager only
 
+## Just do pacman $operate -i $verbosely PACKAGE...
+
+$ pkg info [-v] PACKAGE...
+
+## from information of local packages.
+
+$ pkg [-Csnvd] [-fFORMAT] installed PACKAGE...
 
 # Examples
 
@@ -33,20 +46,22 @@ $ pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
 
 $ pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.**), and install it.
 
-$ pkg 'build' linux # grep 'build' from pacman -Sii linux
-
-Thu 13 Aug 2020 03:50:43 AM JS
-
-$ pkg -l info -v linux # do 'pacman -Qi -i linux'
-
-$ pkg info linux # do 'pacman -Si linux'
+$ pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
 
 $ pkg -l 'name#repo ver' linux # from pacman -Qii linux
 
 linux#core 5.8.1.arch1-1
 
+$ pkg -l v systemd # the version of local 'systemd' is
+
+246.2-1
+
+$ pkg -l info -v linux # do 'pacman -Qi -i linux'
+
+$ pkg info linux # do 'pacman -Si linux'
+
 $ pkg -f'name#repo ver' match xkb # search regex and format
 
-xorg-xkbcomp
+xorg-setxkbmap#extra 1.3.2-2
 
 ...

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #fix this line if move to a system.
-func_home="`dirname '$0'`"
+func_home="`dirname \"$0\"`"
 
 . "$func_home/format_info.sh"
 
@@ -17,12 +17,21 @@ trap 'exit 0' 1 2 3 15
 operate='-S'
 formats="name#repo ver"
 opts= # passed either to pacman or pkgfile
-while getopts lrf: o; do
+cat=/bin/cat
+while getopts lrsvndf:C o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
 	f) # look above function "format_info".
 		formats="$OPTARG"
+	;;
+	s) formats="name ver
+description";;
+	v) formats="$formats Version" ;;
+	n) formats="$formats Name";;
+	d) formats="$formats Build";;
+	C) #copy to clip board by using xsel.
+	   cat=
 	;;
 	*) help;;
 	esac
@@ -35,20 +44,7 @@ OPTIND=1
 
 case "$kind" in
 installed)
-	cat=/bin/cat
-	copy=
 	operate='-Q'
-	while getopts :nvdC o ; do
-		case "$o" in
-		C) #copy to clip board by using xsel.
-		   copy=1 cat=
-		;;
-		# Below is short cuts to add $formats.
-		v) formats="$formats Version" ;;
-		n) formats="$formats Name";;
-		d) formats="$formats Build";;
-		esac
-	done; shift `expr $OPTIND - 1`
 	for f in "$@" ; do
 		eval 'pacman ${operate} -ii "$f" | format_info '"$formats"
 	done | ${cat:-xsel -i -b}
@@ -115,12 +111,8 @@ exit 0;;
 match)
 	SYNOPSIS="match [-snv] pacmans_arg..."
 	opts=-s
-	while getopts :snv-: o; do
+	while getopts :h-: o; do
 		case "$o$OPTARG" in
-			s) formats="name ver
-	description";;
-			n) formats="$format name";;
-			v) formats="$format ver";;
 			h) echo >&2 "$SYNOPSIS"; exit 1;;
 			-) opts="$opts --$OPTARG";;
 			*) opts="$opts -$OPTARG";;
@@ -133,7 +125,7 @@ match)
 		do
 			pacman ${operate} -ii "$p" | format_info "$formats"
 		done
-	done
+	done | ${cat:-xsel -i -b}
 exit 0;;
 own)
 	while getopts :-: o ; do
@@ -199,4 +191,4 @@ done; shift `expr $OPTIND - 1 `
 
 for p in "$@"; do
 	pacman ${operate} -ii $opts "$p" | format_info "$kind"
-done
+done | ${cat:-xsel -i -b}

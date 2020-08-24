@@ -60,8 +60,8 @@ EOL
 		prefix=`prefix "$a"`
 		plain_a="$plain_a$prefix$sname"
 		next=`next "$a"`
-		by_space=`echo "$sname" | sed 's/_/ /g'`
-		if_state="/$by_space[^:]*:/ {"\
+		#by_space=`echo "$sname" | sed 's/_/ /g'`
+		if_state="/$sname[^:]*:/ {"\
 's/^[^:]*://; '\
 's/^/'"$sname='/; "\
 "s/'/'\\''/g; "\
@@ -102,6 +102,12 @@ EOL
 }
 
 align_sections() {
+	if test 2 > `echo "$1" | wc -l`; then
+		:
+	else
+		echo 2>&1 "A newline cannot be in arguments! Will fixed soon."
+		return 1
+	fi
 	# Debuggin will be tirely. but if not with perl,
 	# changing a section in line only, use this.
 	# It is out of above functions' scope in this 'while' block ?

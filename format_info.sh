@@ -1,28 +1,33 @@
 #!/bin/sh
 
+alnums_=A-Za-z0-9_
 safely_expr() {
 	#unusual because if 1st parameter contains any of: ( ) [ ] ^ $ \
 	#may be passed symbols like this: safely "(" "^\([^ALPHANUMS]\).*"
 	#attentioned by expr.
 	#so use `sed'
 	#expr -- "$1" : "$2"
-	result=`echo "$1" | sed -n "s/$2/"'\1/p'`
+	#surround by x for an argument of 'echo' prefixed with `-'.
+	result=`echo x "$1" x | sed -n "1s/^x //; \\$s/ x\$//; s/$2/"'\1/p'`
 	echo "$result"
-	test -n "${result}"
+	test -n "${result:+x}"
 }
 
+sname() {
+	safely_expr "$1" "^[^$alnums_]*\\([$alnums_][$alnums_]*\\).*"
+}
 upperize() {
-	p=`safely_expr "$1" '^[^A-Za-z0-9]*\([A-Za-z0-9]\).*'` \
+	p=`safely_expr "$1" "^[^$alnums_]*\\([$alnums_]\\).*"` \
 	  && echo "$p" | tr '[a-z]' '[A-Z]'
 }
 back_of() {
-	safely_expr "$a" '^[^A-Za-z0-9]*[A-Za-z0-9]\([A-Za-z0-9]*\).*'
+	safely_expr "$a" "^[^$alnums_]*[$alnums_]\\([$alnums_]*\\).*"
 }
 prefix() {
-	safely_expr "$a" '^\([^A-Za-z0-9][^A-Za-z0-9]*\).*'
+	safely_expr "$a" "^\\([^$alnums_][^$alnums_]*\\).*"
 }
 next() {
-	safely_expr "$a" '^[^A-Za-z0-9]*[A-Za-z0-9][A-Za-z0-9]*\([^A-Za-z0-9].*\)$'
+	safely_expr "$a" "^[^$alnums_]*[$alnums_][$alnums_]*\\([^$alnums_].*\\)\$"
 }
 squotes() {
 	sed "s/'/'"'\\'"''/g; 1s/^/'/; "'$s/$/'\'/\;
@@ -46,16 +51,19 @@ EOL
 
 	for a in "$@"; do
 		plain_a= next=
-		while upperize=`upperize "$a"`
+		# sections surrounded by non-alphanums (+underscore) in each args
+		# each line is contains one section.
+		# modify to shell definition statement of variable.
+		while sname=`sname "$a"` \
+		  && sname=`echo "$sname" | tr '[A-Z]' '[a-z]'` # force changing to lowercase.
 		do
-		not_care=`back_of "$a"`
 		prefix=`prefix "$a"`
-		plain_a="$plain_a$prefix$upperize$not_care"
+		plain_a="$plain_a$prefix$sname"
 		next=`next "$a"`
-		a="$upperize$not_care"
-		if_state="/$a/ {"\
-'s/^[^:]*:[ 	]//; '\
-'s/^/'"$a='/; "\
+		by_space=`echo "$sname" | sed 's/_/ /g'`
+		if_state="/$by_space[^:]*:/ {"\
+'s/^[^:]*://; '\
+'s/^/'"$sname='/; "\
 "s/'/'\\''/g; "\
 "s/"\$"/'/; "\
 "p; "\
@@ -75,13 +83,11 @@ EOL
 	formats=
 	for a in "$@"; do
 		plain_a= next=
-		while upperize=`upperize "$a"`
+		while sname=`sname "$a"`
 		do
-		not_care=`back_of "$a"`
 		prefix=`prefix "$a" | squotes`
 		next=`next "$a"`
-		a=$upperize$not_care
-		formats="$formats$prefix\"\$$a\""
+		formats="$formats$prefix\"\$$sname\""
 		a=$next
 		done
 		if test ${next:+x}; then
@@ -92,5 +98,21 @@ EOL
 		fi
 		formats="$formats "
 	done
-	eval "echo x $formats x | sed '1s/^x //; \$s/ x\$//;'"
+	eval "echo x $formats | sed '1s/^x //;'"
+}
+
+align_sections() {
+	# Debuggin will be tirely. but if not with perl,
+	# changing a section in line only, use this.
+	# It is out of above functions' scope in this 'while' block ?
+	while read line; do
+		section=`echo "$line" | sed 's/^\([^:]*\):.*$/\1/'`
+		value=`echo "$line" | sed 's/^[^:]*:[ 	]*\(.*\)$/\1/'`
+
+		section=`echo "$section" | sed 's/[ 	][	 ]*/ /g; s/[ 	]$//' | tr '[A-Z]' '[a-z]'`
+
+		echo "$section:$value"
+	done \
+	  | format_info "$1"
+	
 }

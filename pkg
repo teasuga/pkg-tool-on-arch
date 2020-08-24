@@ -25,8 +25,7 @@ while getopts lrsvndf:C o; do
 	f) # look above function "format_info".
 		formats="$OPTARG"
 	;;
-	s) formats="name ver
-description";;
+	s) formats="name ver";;
 	v) formats="$formats Version" ;;
 	n) formats="$formats Name";;
 	d) formats="$formats Build";;

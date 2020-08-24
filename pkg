@@ -162,7 +162,7 @@ contain)
 	done
 exit 0;;
 info)
-	verbose= operate=-S
+	verbose=
 	while getopts :v o ; do
 		case "$o" in
 		v)   verbose=-i;;

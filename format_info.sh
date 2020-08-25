@@ -14,7 +14,10 @@ safely_expr() {
 }
 
 sname() {
-	safely_expr "$1" "^[^$alnums_]*\\([$alnums_][$alnums_]*\\).*"
+	echo x "$1" | sed -n '1s/^x //;
+	  :non; /'"[$alnums_]"'/balnums; n; bnon;
+	  :alnums; s/^'"[^$alnums_][^$alnums_]*"'//; s/'"[^$alnums_]"'.*$//;
+	    s/\('"[$alnums_][$alnums_]*"'\)/\1/p; q; '
 }
 upperize() {
 	p=`safely_expr "$1" "^[^$alnums_]*\\([$alnums_]\\).*"` \
@@ -24,10 +27,17 @@ back_of() {
 	safely_expr "$a" "^[^$alnums_]*[$alnums_]\\([$alnums_]*\\).*"
 }
 prefix() {
-	safely_expr "$a" "^\\([^$alnums_][^$alnums_]*\\).*"
+	echo x "$1" | sed -n '1s/^x //;
+	  :non; /'"[$alnums_]"'/balnums; N; bnon;
+	  :alnums; s/'"[$alnums_]"'.*//; p; q; '
 }
 next() {
-	safely_expr "$a" "^[^$alnums_]*[$alnums_][$alnums_]*\\([^$alnums_].*\\)\$"
+	echo x "$1" | sed -n '1s/^x //;
+	  :non; /'"[$alnums_]"'/balnums; n; bnon;
+	  :alnums; s/^'"[^$alnums_][^$alnums_]*"'//;
+	    s/^'"[$alnums_][$alnums_]*"'//; p;
+	  :next; n; p; $bend; bnext;
+	  :end; '
 }
 squotes() {
 	sed "s/'/'"'\\'"''/g; 1s/^/'/; "'$s/$/'\'/\;
@@ -54,7 +64,9 @@ EOL
 		# sections surrounded by non-alphanums (+underscore) in each args
 		# each line is contains one section.
 		# modify to shell definition statement of variable.
-		while sname=`sname "$a"` \
+
+		# get sname by using just "sed" (in sname) instead.
+		while { sname=`sname "$a"` ; test -n "${sname:+x}"; } \
 		  && sname=`echo "$sname" | tr '[A-Z]' '[a-z]'` # force changing to lowercase.
 		do
 		prefix=`prefix "$a"`
@@ -83,7 +95,7 @@ EOL
 	formats=
 	for a in "$@"; do
 		plain_a= next=
-		while sname=`sname "$a"`
+		while { sname=`sname "$a"`; test -n "${sname:+x}"; }
 		do
 		prefix=`prefix "$a" | squotes`
 		next=`next "$a"`
@@ -102,7 +114,7 @@ EOL
 }
 
 align_sections() {
-	if test 2 > `echo "$1" | wc -l`; then
+	if test 2 -gt `echo "$1" | wc -l`; then
 		:
 	else
 		echo 2>&1 "A newline cannot be in arguments! Will fixed soon."
@@ -120,5 +132,4 @@ align_sections() {
 		echo "$section:$value"
 	done \
 	  | format_info "$1"
-	
 }

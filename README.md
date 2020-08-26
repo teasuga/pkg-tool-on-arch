@@ -1,6 +1,8 @@
-# branch: with_newline
-
-for my tool 'pkg'.
+## What's new (may has a bug)
+   Newlines within a format.
+    
+## A IMPORTANTLY BUG IS
+   Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.
 
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
@@ -26,15 +28,9 @@ for my tool 'pkg'.
     rm "$PATH_DIR/pkg"
     rm "$FUNC_HOME/format_info.sh"
 
-## What's new (may has a bug)
-    can contain newlines.
-    
-## A bug is
-    Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.
-
 ## How to use
 
-    # global options: [-l|-r] (local, from remote database) , -f specify formats
+Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Create a script on $script_home, and edit with $EDITOR.
 
@@ -46,7 +42,7 @@ for my tool 'pkg'.
 
 ## Print formatted description of a package.
 
-    # global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
+    # Global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
 
     pkg [-fFORMAT] match REGEX... # search packages by regex and format info
     pkg 'FORMAT' PACKAGE... # like -f option, but sections in one line from pacman's output

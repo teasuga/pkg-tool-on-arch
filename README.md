@@ -1,4 +1,4 @@
-# branch: summer.20
+# branch: underscore_as_space
 
 for my tool 'pkg'.
 
@@ -7,7 +7,7 @@ for my tool 'pkg'.
   2. format_info.sh (get stdout of pacman, and only print sections specified on command line.)
 
 ## Run locally
-  $ git clone --branch summer.20 https://github.com/teasuga/pkg-tool-on-arch.git
+  $ git clone --branch underscore_as_space https://github.com/teasuga/pkg-tool-on-arch.git
 
   $ cd pkg-tool-on-arch
 
@@ -23,7 +23,7 @@ for my tool 'pkg'.
   $ sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
 ## And run on a system
-  $ sh pkg 'version @ build' systemd
+  $ pkg 'version @ build' systemd
   
 ## Remove them
   $ rm "$PATH_DIR/pkg"
@@ -70,9 +70,9 @@ $ pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
 
 $ pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
 
-$ pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
+$ pkg -C 'name: build_date' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
 
-$ pkg -l 'name#repo ver' linux # from pacman -Qii linux
+$ pkg -l 'name#repo ver' pacman # from pacman -Qii pacman
 
 linux#core 5.8.1.arch1-1
 
@@ -80,7 +80,7 @@ $ pkg -l v systemd # the version of local 'systemd' is
 
 246.2-1
 
-$ pkg -l info -v linux # do 'pacman -Qi -i linux'
+$ pkg -l info -v coreutils # do 'pacman -Qi -i coreutils'
 
 $ pkg info linux # do 'pacman -Si linux'
 

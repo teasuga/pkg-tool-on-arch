@@ -23,7 +23,7 @@ for my tool 'pkg'.
   $ sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
 ## And run on a system
-  $ sh pkg 'version @ build' systemd
+  $ pkg 'version @ build' systemd
   
 ## Remove them
   $ rm "$PATH_DIR/pkg"

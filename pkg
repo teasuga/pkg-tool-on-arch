@@ -45,7 +45,7 @@ case "$kind" in
 installed)
 	operate='-Q'
 	for f in "$@" ; do
-		eval 'pacman ${operate} -ii "$f" | align_sections '"$formats"
+		eval 'pacman ${operate} -ii "$f" | format_info '"$formats"
 	done | ${cat:-xsel -i -b}
 exit 0;;
 remove)
@@ -122,7 +122,7 @@ match)
 	do
 		for p in `pacman ${operate} -q $opts "$r"`
 		do
-			pacman ${operate} -ii "$p" | align_sections "$formats"
+			pacman ${operate} -ii "$p" | format_info "$formats"
 		done
 	done | ${cat:-xsel -i -b}
 exit 0;;
@@ -189,5 +189,5 @@ while getopts :-: o ; do
 done; shift `expr $OPTIND - 1 `
 
 for p in "$@"; do
-	pacman ${operate} -ii $opts "$p" | align_sections "$kind"
+	pacman ${operate} -ii $opts "$p" | format_info "$kind"
 done | ${cat:-xsel -i -b}

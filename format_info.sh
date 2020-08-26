@@ -56,7 +56,7 @@ EOL
 
 	while read line; do
 		section=`echo "$line" | awk 'BEGIN { FS=":" } { print $1 }' | tr '[A-Z]' '[a-z]'`
-		value=`echo "$line" | awk 'BEGIN { FS=":" } { print $2 }'`
+		value=`echo "$line" | sed 's/^[^:]*://'` # sed for a value contains a colon.
 		echo "$section:$value"
 	done \
 	  | modify_et_print "$1"

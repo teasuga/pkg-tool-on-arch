@@ -102,7 +102,7 @@ EOL
 }
 
 align_sections() {
-	if test 2 > `echo "$1" | wc -l`; then
+	if test 2 -gt `echo "$1" | wc -l`; then
 		:
 	else
 		echo 2>&1 "A newline cannot be in arguments! Will fixed soon."

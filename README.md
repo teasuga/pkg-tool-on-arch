@@ -1,7 +1,9 @@
-# branch: underscore_as_space
-
-for my tool 'pkg'.
-
+## News
+  A bug is.
+  
+## A IMPORTANT BUG
+  Optional Deps on multiple lines, so NOT CORRECTLY INFORMATIONS from a function.
+  
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
   2. format_info.sh (get stdout of pacman, and only print sections specified on command line.)

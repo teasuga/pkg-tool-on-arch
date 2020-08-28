@@ -8,8 +8,13 @@ func_home="`dirname \"$0\"`"
 # change this to your like.
 script_home="$HOME/scripts"
 
+bp=
 help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
+}
+info() {
+	( pacman -Sii $opts "$1" | format_info "$bp" "$format" ) &
+	bid=$!
 }
 
 trap 'exit 0' 1 2 3 15
@@ -44,8 +49,9 @@ OPTIND=1
 case "$kind" in
 installed)
 	operate='-Q'
-	for f in "$@" ; do
-		eval 'pacman ${operate} -ii "$f" | format_info '"$formats"
+	opts=
+	for p in "$@" ; do
+		info "$p"
 	done | ${cat:-xsel -i -b}
 exit 0;;
 remove)
@@ -122,7 +128,8 @@ match)
 	do
 		for p in `pacman ${operate} -q $opts "$r"`
 		do
-			pacman ${operate} -ii "$p" | format_info "$formats"
+			opts=
+			info "$p"
 		done
 	done | ${cat:-xsel -i -b}
 exit 0;;
@@ -188,6 +195,7 @@ while getopts :-: o ; do
 	esac
 done; shift `expr $OPTIND - 1 `
 
+format=$kind
 for p in "$@"; do
-	pacman ${operate} -ii $opts "$p" | format_info "$kind"
+	info "$p"
 done | ${cat:-xsel -i -b}

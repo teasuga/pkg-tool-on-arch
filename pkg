@@ -14,7 +14,7 @@ help() {
 }
 info() {
 	( pacman -Sii $opts "$1" | format_info "$bp" "$format" ) &
-	bid=$!
+	bp=$!
 }
 
 trap 'exit 0' 1 2 3 15

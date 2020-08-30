@@ -13,14 +13,15 @@ help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
 info() {
-	( pacman -Sii $opts "$1" | format_info "$bp" "$format" ) &
+	( pacman ${operate} -ii $opts "$1" | format_info "$bp" "$format" ) &
 	bp=$!
 }
 
 trap 'exit 0' 1 2 3 15
+trap 'wait' 0
 
 operate='-S'
-formats="name#repo ver"
+format="name#repo ver"
 opts= # passed either to pacman or pkgfile
 cat=/bin/cat
 while getopts lrsvndf:C o; do
@@ -28,12 +29,12 @@ while getopts lrsvndf:C o; do
 	r) operate='-S';;
 	l) operate='-Q';;
 	f) # look above function "format_info".
-		formats="$OPTARG"
+		format="$OPTARG"
 	;;
-	s) formats="name ver";;
-	v) formats="$formats Version" ;;
-	n) formats="$formats Name";;
-	d) formats="$formats Build";;
+	s) format="name ver";;
+	v) format="$format Version" ;;
+	n) format="$format Name";;
+	d) format="$format Build";;
 	C) #copy to clip board by using xsel.
 	   cat=
 	;;

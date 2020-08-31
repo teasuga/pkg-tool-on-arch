@@ -1,6 +1,13 @@
 ## What's new (may has a bug)
+<<<<<<< format_info.sh
    Newlines within a format.
     
+=======
+   1. Able to get sections over lines,
+   2. Proceed speedy (by being "pacman -Sii"s on background)
+   3. (with the branch "pkg"'s).
+
+>>>>>>> local
 ## A IMPORTANTLY BUG IS
    Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.
 

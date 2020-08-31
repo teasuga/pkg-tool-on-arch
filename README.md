@@ -1,8 +1,14 @@
 ## What's new (may has a bug)
-   Newlines within a format.
-    
+   1. Able to get sections over lines,
+   2. Proceed speedy (by being "pacman -Sii"s on background)
+   3. (with the branch "format_info.sh"'s).
+
 ## A IMPORTANTLY BUG IS
-   Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.
+   Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
+
+   MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.
+   
+   This bug will fixed by limiting processes which system() "pacman".
 
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
@@ -44,7 +50,9 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
     # Global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
 
+    # DO NOT THIS.
     pkg [-fFORMAT] match REGEX... # search packages by regex and format info
+
     pkg 'FORMAT' PACKAGE... # like -f option, but sections in one line from pacman's output
     pkg v PACKAGE... # like -v option, but version only
     pkg s PACKAGE... # like -s option, but "Name Version" only
@@ -69,6 +77,8 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
     246.2-1
     $ pkg -l info -v linux # do 'pacman -Qi -i linux'
     $ pkg info linux # do 'pacman -Si linux'
+    
+    # DO NOT THIS.
     $ pkg -f'name#repo ver' match xkb # search regex and format
     xorg-setxkbmap#extra 1.3.2-2
     ...

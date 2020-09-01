@@ -1,4 +1,5 @@
 # Experiment
+  For making 'match' sane.
 
 ## What's new
   It is faster than to separately system(pacman...) with each package (in background.).

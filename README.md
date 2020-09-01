@@ -19,3 +19,5 @@
     sh ./much-once-pacman.sh 'REGEX' [-nNUM] [-l] [-d] | grep ^Name | wc -l
     # separately system(pacman...) on background.
     sh ./much-once-pacman.sh 'REGEX' [-nNUM] [-l] [-d] -S [-f] | grep ^Name | wc -l
+    # 50 packages which match with REGEX "linux", separately run on background, evaluates time.
+    sh ./much-once-pacman.sh '' -n50 -d -S | grep ^Name | wc -l

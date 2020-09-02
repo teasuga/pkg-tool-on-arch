@@ -1,7 +1,7 @@
 # pkg-tool-on-arch
 A tool to do something packages on Arch Linux. The name is from a shell script.
 
-There is my tool 'pkg' on branches: "summer.20", "underscore_as_space", "with_newline", "pkg", "format_info.sh".
+There is my tool 'pkg' on branches: "summer.20", "underscore_as_space", "with_newline", "pkg".
 
 ## Latest commit (branch) is
   "pkg" or "format_info.sh"

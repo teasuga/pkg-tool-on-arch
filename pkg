@@ -55,16 +55,6 @@ installed)
 		info "$p"
 	done | ${cat:-xsel -i -b}
 exit 0;;
-remove)
-	while getopts :-: opt; do
-		case "$opt" in
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	eval "exec pacman -R $opts "'"$@"'
-exit 0;;
 create)
 	careful= reporting= installing= builddir=
 	makepkg_opts=-srCf
@@ -133,41 +123,6 @@ match)
 			info "$p"
 		done
 	done | ${cat:-xsel -i -b}
-exit 0;;
-own)
-	while getopts :-: o ; do
-		case "$o" in
-		-) opts="$opts --$o";;
-		*) opts="$opts -$o";;
-		esac
-	done; shift `expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Q $opts -o "$f"
-		else
-			pkgfile $opts "$f"
-		fi
-	done
-exit 0;;
-contain)
-	opt=
-	while getopts :S-: opt; do
-		case "$opt" in
-		S) echo "S not supported." >&2; exit 1;; # dummy for getting other pacman opts.
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-		opts="$opts -$OPTARG"
-	done; shift ` expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Ql $opts "$f"
-		else
-			pkgfile -l $opts "$f"
-		fi
-	done
 exit 0;;
 info)
 	for f in "$@"

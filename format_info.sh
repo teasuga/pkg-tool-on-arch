@@ -1,5 +1,6 @@
 #!/bin/sh
 
+<<<<<<< HEAD
 upper=ABCDEFGHIJKLMNOPQRSTUVWXYZ
 lower=`tr '[A-Z]' '[a-z]' << EOL
 $upper
@@ -100,6 +101,8 @@ EOL
 `
 	seding "$sections" | evaluates "$sections" "$1"
 =======
+=======
+>>>>>>> format_info.sh
 stest () {
 	section=$1; shift
 	quoting=

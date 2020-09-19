@@ -4,9 +4,9 @@
 
 operate='-S'
 log() {
-	eval "$debug"
+	eval "$logging"
 }
-debug=:
+logging=
 n=20
 OPTIND=1
 separately=
@@ -18,7 +18,7 @@ while getopts n:ldsSf o; do
 	case "$o" in
 	n) n=$OPTARG;;
 	l) operate='-Q';;
-	d) debug=`cat <<\EOL
+	d) logging=`cat <<\EOL
 echo >&2 x "$@" | sed '1s/^x //'
 EOL`
 	   ;;
@@ -29,18 +29,24 @@ EOL`
 	esac
 done ; shift `expr $OPTIND - 1`
 
-pkgs=`pacman $operate -qs ${RE:-linux}`
+pkgs=`pacman $operate -qs ${RE:-linux}` || exit # no packages
 l=`sed -n '/[^ 	]/p' <<EOL | wc -l
 $pkgs
 EOL`
 
-r=`perl -e '$r = rand; print int($ARGV[0] * $r), "\n";' $l`
+# rand()
+#   Returned a floating number which will be greater than or equal to 0,
+#   and less than 1.
+r=`perl -e 'print int($ARGV[0] * rand()), "\n";' $l`
 
 log "$r / $l"
+
 test $n -le `expr $l - $r` || r=`expr $r - $n`
 test $r -ge 1 || r=1
 e=`expr $r + $n`; test $e -lt $l || e=$l
 
+# want to get ${n} packages,
+# or just one.
 pkgs=`if test 1 -ne $n; then
 	sed -n $r,${e}p <<EOL
 $pkgs

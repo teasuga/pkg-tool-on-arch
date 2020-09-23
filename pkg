@@ -8,13 +8,13 @@ func_home="`dirname \"$0\"`"
 # change this to your like.
 script_home="$HOME/scripts"
 
-bp=
+#bp=
 help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
 info() {
-	( pacman ${operate} -ii $opts "$1" | format_info "$bp" "$format" ) &
-	bp=$!
+	( pacman ${operate} -ii $opts "$1" | format_info "$format" ) &
+	#bp=$!
 }
 
 trap 'exit 0' 1 2 3 15

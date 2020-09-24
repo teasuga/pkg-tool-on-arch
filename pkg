@@ -13,7 +13,16 @@ help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
 info() {
-	( pacman ${operate} -ii $opts "$1" | format_info "$format" ) &
+	# Getting much packages needs to fix outside of function
+	# like:
+	#   info "$@"
+	# and:
+	#   info() {
+	#     pacman -S -ii "$@" | format_info
+    #   }
+	# * Merging have been strange, because git is difficult for me.
+	#   After "unusable-shortcut" merged, will commit.
+	( pacman ${operate} -ii $opts "$1" | format_info "$format" )
 	#bp=$!
 }
 

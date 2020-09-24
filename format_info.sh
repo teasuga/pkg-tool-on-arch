@@ -10,11 +10,11 @@ alnums="[$alnums]"
 
 
 evaluates() {
-	format=`echo 2 "$2" | sed "
-		1s/^2 //;
-		s/$alnums$alnums*/"'\\\$&/g;' \
-	  | tr '[a-z-]' '[A-Z_]'`
-	sections=$1
+    format=`echo 2 "$2" | sed "
+        1s/^2 //;
+        s/$alnums$alnums*/"'\\\$&/g;' \
+      | tr '[a-z-]' '[A-Z_]'`
+    sections=$1
 
 	for s in $sections; do
 		eval "$s="
@@ -23,7 +23,7 @@ evaluates() {
 		read line || break
 		case "$line" in
 		'')
-			eval 'cat << EOL
+            eval 'cat << EOL
 '"$format"'
 EOL'
 			for s in $sections; do
@@ -40,7 +40,13 @@ $'"$s"\"
 			;;
 		esac
 	done
-	test x"$line" = x || eval "echo x $format" | sed '1s/^x//'
+	if test x"$line" = x
+	then :
+	else
+            eval 'cat << EOL
+'"$format"'
+EOL'
+	fi
 }
 	
 seding() {
@@ -82,19 +88,14 @@ seding() {
 
 $if_states"'
 	s/^.*$//; x; d;
-	:words;'"
-	x; G;
-	/^$non_alnums/ {"'
-		s/^\([^\n][^\n]*\)\n\(.*\)$/\2="\$\2"'\''\1/;
-	}'"
-	/^$alnums/ {"'
-		s/^\([^\n][^\n]*\)\n\(.*\)$/\2='\''\1/;
-	}
-	'
+    :words;
+    x; G;
+        s/^\([^\n][^\n]*\)\n\(.*\)$/\2='\''\1/;
+    '
 }
 
 format_info() {
-	sections=`awk 'BEGIN {RS="'"$non_alnums"'"} { print $0 }' << EOL | tr '[a-z\n \t]' '[A-Z   ]'
+	sections=`awk 'BEGIN {RS="'"$non_alnums"'"} { print $0 }' << EOL | tr '[a-z-\n \t]' '[A-Z_   ]'
 $1
 EOL
 `

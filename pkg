@@ -8,13 +8,22 @@ func_home="`dirname \"$0\"`"
 # change this to your like.
 script_home="$HOME/scripts"
 
-bp=
+#bp=
 help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
 info() {
-	( pacman ${operate} -ii $opts "$1" | format_info "$bp" "$format" ) &
-	bp=$!
+	# Getting much packages needs to fix outside of function
+	# like:
+	#   info "$@"
+	# and:
+	#   info() {
+	#     pacman -S -ii "$@" | format_info
+    #   }
+	# * Merging have been strange, because git is difficult for me.
+	#   After "unusable-shortcut" merged, will commit.
+	( pacman ${operate} -ii $opts "$1" | format_info "$format" )
+	#bp=$!
 }
 
 trap 'exit 0' 1 2 3 15

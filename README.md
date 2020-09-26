@@ -1,14 +1,9 @@
 ## What's new (may has a bug)
-   1. Able to get sections over lines,
-   2. Proceed speedy (by being "pacman -Sii"s on background)
-   3. (with the branch "pkg"'s).
-
-## A IMPORTANTLY BUG IS
-   Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
-
-   MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.
+   1. Fast than simultaneously do same thing.
+   2. Will merge few days later and also fix "pkg".
    
-   This bug will fixed by limiting processes which system() "pacman".
+## A IMPORTANTLY BUG IS
+   Fixed: (MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.)
 
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
@@ -16,7 +11,7 @@
 
 ## Run locally
 
-    git clone --branch with_newline https://github.com/teasuga/pkg-tool-on-arch.git
+    git clone --branch new-format_info.sh https://github.com/teasuga/pkg-tool-on-arch.git
     cd pkg-tool-on-arch
     sh ./pkg 'name ver (build_date)
         desc' pacman

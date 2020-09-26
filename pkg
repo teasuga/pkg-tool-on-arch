@@ -22,7 +22,7 @@ info() {
     #   }
 	# * Merging have been strange, because git is difficult for me.
 	#   After "unusable-shortcut" merged, will commit.
-	( pacman ${operate} -ii $opts "$1" | format_info "$format" )
+	( pacman ${operate} -ii $opts "$@" | format_info "$format" )
 	#bp=$!
 }
 

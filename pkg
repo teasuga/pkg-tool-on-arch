@@ -133,4 +133,8 @@ while getopts :-: o ; do
 	esac
 done; shift `expr $OPTIND - 1 `
 
+if test x"$kind" = xmatch
+then set 2 `pacman $operate -q -s "$@"`; shift
+else :
+fi
 info "$@" | ${cat:-xsel -i -b}

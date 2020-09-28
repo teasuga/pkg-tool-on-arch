@@ -152,6 +152,7 @@ esac
 
 while getopts :-: o ; do
 	case "$o" in
+	h) echo >&2 "$0 [-rl] [-snvpdul] [-fFORMAT] [-C] $SYNOPSIS"; exit 0;;
 	-) opts="$opts --$OPTARG";;
 	*) opts="$opts -$OPTARG";;
 	esac

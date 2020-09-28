@@ -62,6 +62,7 @@ OPTIND=1
 
 case "$kind" in
 installed)
+	SYNOPSIS="installed PACKAGE..."
 	operate='-Q'
 	for p in "$@" ; do
 		info "$p"
@@ -117,7 +118,7 @@ edit)
 	done
 exit 0;;
 match)
-	SYNOPSIS="match [-snv] pacmans_arg..."
+    SYNOPSIS="match REGEX..."
 	opts=-s
 	while getopts :h-: o; do
 		case "$o$OPTARG" in
@@ -137,12 +138,14 @@ match)
 	done | ${cat:-xsel -i -b}
 exit 0;;
 info)
+    SYNOPSIS="info PACKAGE..."
 	for f in "$@"
 	do
 		info "$f"
 	done | ${cat:-xsel -i -b}
 exit 0;;
 *)  
+	SYNOPSIS="'FORMAT' PACKAGE..." ;;
 	format=$kind
 ;;
 esac

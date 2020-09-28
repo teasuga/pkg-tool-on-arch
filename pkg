@@ -33,7 +33,7 @@ operate='-S'
 format=
 opts= # passed either to pacman or pkgfile
 cat=/bin/cat
-while getopts lrf:svndpu:lC o; do
+while getopts lrf:svndpu:iC o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
@@ -46,7 +46,7 @@ while getopts lrf:svndpu:lC o; do
 	d) format="${format}Build_date";;
 	p) format="${format}Packager";;
 	u) format="${format}$OPTARG";;
-	l) format="${format}
+	i) format="${format}
 ";;
 	C) #copy to clip board by using xsel.
 	   cat=

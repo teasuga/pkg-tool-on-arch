@@ -63,11 +63,7 @@ OPTIND=1
 case "$kind" in
 installed)
 	SYNOPSIS="installed PACKAGE..."
-	operate='-Q'
-	for p in "$@" ; do
-		info "$p"
-	done | ${cat:-xsel -i -b}
-exit 0;;
+;;
 create)
 	careful= reporting= installing= builddir=
 	makepkg_opts=-srCf
@@ -119,31 +115,10 @@ edit)
 exit 0;;
 match)
     SYNOPSIS="match REGEX..."
-	opts=-s
-	while getopts :h-: o; do
-		case "$o$OPTARG" in
-			h) echo >&2 "$SYNOPSIS"; exit 1;;
-			-) opts="$opts --$OPTARG";;
-			*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	for r in "$@"
-	do
-		for p in `pacman ${operate} -q $opts "$r"`
-		do
-			opts=
-			info "$p"
-		done
-	done | ${cat:-xsel -i -b}
-exit 0;;
+;;
 info)
     SYNOPSIS="info PACKAGE..."
-	for f in "$@"
-	do
-		info "$f"
-	done | ${cat:-xsel -i -b}
-exit 0;;
+;;
 *)  
 	SYNOPSIS="'FORMAT' PACKAGE..." ;;
 	format=$kind

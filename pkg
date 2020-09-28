@@ -62,6 +62,8 @@ OPTIND=1
 
 case "$kind" in
 installed)
+	# Is this not need ?
+	opts='-Q'
 	SYNOPSIS="installed PACKAGE..."
 ;;
 create)

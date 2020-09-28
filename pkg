@@ -157,6 +157,4 @@ while getopts :-: o ; do
 	esac
 done; shift `expr $OPTIND - 1 `
 
-for p in "$@"; do
-	info "$p"
-done | ${cat:-xsel -i -b}
+info "$@" | ${cat:-xsel -i -b}

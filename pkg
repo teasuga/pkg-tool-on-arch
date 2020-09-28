@@ -142,7 +142,9 @@ info)
 		info "$f"
 	done | ${cat:-xsel -i -b}
 exit 0;;
-*)  : ;;
+*)  
+	format=$kind
+;;
 esac
 
 while getopts :-: o ; do
@@ -152,7 +154,6 @@ while getopts :-: o ; do
 	esac
 done; shift `expr $OPTIND - 1 `
 
-format=$kind
 for p in "$@"; do
 	info "$p"
 done | ${cat:-xsel -i -b}

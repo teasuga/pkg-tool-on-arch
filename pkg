@@ -122,7 +122,7 @@ info)
     SYNOPSIS="info PACKAGE..."
 ;;
 *)  
-	SYNOPSIS="'FORMAT' PACKAGE..." ;;
+	SYNOPSIS="'FORMAT' PACKAGE..."
 	format=$kind
 ;;
 esac

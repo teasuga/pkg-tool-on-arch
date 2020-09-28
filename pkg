@@ -30,20 +30,21 @@ trap 'exit 0' 1 2 3 15
 trap 'wait' 0
 
 operate='-S'
-format="name#repo ver"
+format=
 opts= # passed either to pacman or pkgfile
 cat=/bin/cat
-while getopts lrsvndf:C o; do
+while getopts lrf:svndpC o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
 	f) # look above function "format_info".
 		format="$OPTARG"
 	;;
-	s) format="name ver";;
-	v) format="$format Version" ;;
-	n) format="$format Name";;
-	d) format="$format Build";;
+	s) format="${format} ";;
+	v) format="${format}Version" ;;
+	n) format="${format}Name";;
+	d) format="${format}Build_date";;
+	p) format="${format}Packager";;
 	C) #copy to clip board by using xsel.
 	   cat=
 	;;
@@ -59,20 +60,9 @@ OPTIND=1
 case "$kind" in
 installed)
 	operate='-Q'
-	opts=
 	for p in "$@" ; do
 		info "$p"
 	done | ${cat:-xsel -i -b}
-exit 0;;
-remove)
-	while getopts :-: opt; do
-		case "$opt" in
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	eval "exec pacman -R $opts "'"$@"'
 exit 0;;
 create)
 	careful= reporting= installing= builddir=
@@ -143,58 +133,12 @@ match)
 		done
 	done | ${cat:-xsel -i -b}
 exit 0;;
-own)
-	while getopts :-: o ; do
-		case "$o" in
-		-) opts="$opts --$o";;
-		*) opts="$opts -$o";;
-		esac
-	done; shift `expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Q $opts -o "$f"
-		else
-			pkgfile $opts "$f"
-		fi
-	done
-exit 0;;
-contain)
-	opt=
-	while getopts :S-: opt; do
-		case "$opt" in
-		S) echo "S not supported." >&2; exit 1;; # dummy for getting other pacman opts.
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-		opts="$opts -$OPTARG"
-	done; shift ` expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Ql $opts "$f"
-		else
-			pkgfile -l $opts "$f"
-		fi
-	done
-exit 0;;
 info)
-	verbose=
-	while getopts :v o ; do
-		case "$o" in
-		v)   verbose=-i;;
-		esac
-	done; shift `expr $OPTIND - 1`
-			
 	for f in "$@"
 	do
-		pacman $operate -i $verbose "$f"
-	done
+		info "$f"
+	done | ${cat:-xsel -i -b}
 exit 0;;
-v*) kind=version;;
-s*) kind='repo/name version';; # short format.
-u*) kind=url;;
-p*) kind=packager;;
 *)  : ;;
 esac
 

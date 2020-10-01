@@ -64,6 +64,9 @@ seding() {
 	done
 
 	sed "
+	"'/^\(UN\|\)MODIFIED/ {
+		bquote;
+	}'"
 	/^$alnums/ {
 		h;
 		s/[ 	][ 	]*:.*//;

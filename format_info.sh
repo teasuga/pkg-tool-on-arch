@@ -10,10 +10,12 @@ alnums="[$alnums]"
 
 
 evaluates() {
+	# In format, a hiphen is as other separators.
+	alnums=`echo "$alnums" | sed 's/-//'`
     format=`echo 2 "$2" | sed "
         1s/^2 //;
         s/$alnums$alnums*/"'\\\$&/g;' \
-      | tr '[a-z-]' '[A-Z_]'`
+      | tr '[a-z]' '[A-Z]'`
     sections=$1
 
 	for s in $sections; do
@@ -63,6 +65,7 @@ seding() {
 		if_states="$if_states$if_state"
 	done
 
+	# By sed, Hiphens in section name are exchange to underscores.
 	sed "
 	"'/^\(UN\|\)MODIFIED/ {
 		bquote;
@@ -98,7 +101,9 @@ $if_states"'
 }
 
 format_info() {
-	sections=`awk 'BEGIN {RS="'"$non_alnums"'"} { print $0 }' << EOL | tr '[a-z-\n \t]' '[A-Z_   ]'
+	# In format, a hiphen is as other separators.
+	non_alnums=`echo "$non_alnums" | sed 's/-//'`
+	sections=`awk 'BEGIN {RS="'"$non_alnums"'"} { print $0 }' << EOL | tr '[a-z\n \t]' '[A-Z   ]'
 $1
 EOL
 `

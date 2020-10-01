@@ -33,7 +33,7 @@ operate='-S'
 format=
 opts= # passed either to pacman or pkgfile
 cat=/bin/cat
-while getopts lrf:svndpC o; do
+while getopts lrf:svndpu:iC o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
@@ -45,6 +45,9 @@ while getopts lrf:svndpC o; do
 	n) format="${format}Name";;
 	d) format="${format}Build_date";;
 	p) format="${format}Packager";;
+	u) format="${format}$OPTARG";;
+	i) format="${format}
+";;
 	C) #copy to clip board by using xsel.
 	   cat=
 	;;
@@ -59,11 +62,10 @@ OPTIND=1
 
 case "$kind" in
 installed)
+	# Is this not need ?
 	operate='-Q'
-	for p in "$@" ; do
-		info "$p"
-	done | ${cat:-xsel -i -b}
-exit 0;;
+	SYNOPSIS="installed PACKAGE..."
+;;
 create)
 	careful= reporting= installing= builddir=
 	makepkg_opts=-srCf
@@ -114,42 +116,27 @@ edit)
 	done
 exit 0;;
 match)
-	SYNOPSIS="match [-snv] pacmans_arg..."
-	opts=-s
-	while getopts :h-: o; do
-		case "$o$OPTARG" in
-			h) echo >&2 "$SYNOPSIS"; exit 1;;
-			-) opts="$opts --$OPTARG";;
-			*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	for r in "$@"
-	do
-		for p in `pacman ${operate} -q $opts "$r"`
-		do
-			opts=
-			info "$p"
-		done
-	done | ${cat:-xsel -i -b}
-exit 0;;
+    SYNOPSIS="match REGEX..."
+;;
 info)
-	for f in "$@"
-	do
-		info "$f"
-	done | ${cat:-xsel -i -b}
-exit 0;;
-*)  : ;;
+    SYNOPSIS="info PACKAGE..."
+;;
+*)  
+	SYNOPSIS="'FORMAT' PACKAGE..."
+	format=$kind
+;;
 esac
 
 while getopts :-: o ; do
 	case "$o" in
+	h) echo >&2 "$0 [-rl] [-snvpdul] [-fFORMAT] [-C] $SYNOPSIS"; exit 0;;
 	-) opts="$opts --$OPTARG";;
 	*) opts="$opts -$OPTARG";;
 	esac
 done; shift `expr $OPTIND - 1 `
 
-format=$kind
-for p in "$@"; do
-	info "$p"
-done | ${cat:-xsel -i -b}
+if test x"$kind" = xmatch
+then set 2 `pacman $operate -q -s "$@"`; shift
+else :
+fi
+info "$@" | ${cat:-xsel -i -b}

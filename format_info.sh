@@ -80,16 +80,19 @@ seding() {
 		if_states="$if_states$if_state"
 	done
 
-	sed "
-	"'/^\(UN\|\)MODIFIED/ {
+#	backup_files='/\(^(none)$\|^\(UNREADABLE\|UNMODIFIED\|MODIFIED\)'"$tab"'\)/ {
+
+	backup_files='/\(^[A-Z][A-Z]*'"$tab"'\)/ {
 		bquote;
-	}'"
+	}"
+	sed "
+	$backup_files
 	/^$alnums/ {
 		h;
 		s/[ 	][ 	]*:.*//;
 		y/${lower} -/${upper}__/;
 		x;
-		s/^[^:][^:]*:[	 ]//;
+		s/^[^:][^:]*://; s/^ //;
 		bquote;
 	}
 	/^$non_alnums/ {

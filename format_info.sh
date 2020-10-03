@@ -8,7 +8,24 @@ alnums='-A-Za-z0-9_'
 non_alnums="[^$alnums]"
 alnums="[$alnums]"
 
-
+tab=`echo x | tr 'x' '\011'`
+unknown_values() {
+	# Maybe it takes much time to do this.
+	# If you found something that I didnt expect, please report.
+	# Note: I dont read and verify by sources of pacman.
+	pacman ${1--Q} -ii | sed "
+		/^[-A-Za-z0-9 ][-A-Za-z0-9 ]*  *:/ {
+			h;
+			s/^[^:][^:]*://;
+			/^\( \|$\)/d
+			x; n;
+		}
+		"'/\(^(none)$\|^[A-Z][A-Z]*'"$tab"'\|^  *\)/ {
+			d
+		}
+		/^$/d
+	' | sort -u
+}
 evaluates() {
     format=`echo 2 "$2" | sed "
         1s/^2 //;

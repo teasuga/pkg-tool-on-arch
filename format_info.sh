@@ -67,9 +67,6 @@ seding() {
 
 	# By sed, Hiphens in section name are exchange to underscores.
 	sed "
-	"'/^\(UN\|\)MODIFIED/ {
-		bquote;
-	}'"
 	/^$alnums/ {
 		h;
 		s/[ 	][ 	]*:.*//;

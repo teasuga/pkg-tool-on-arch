@@ -84,7 +84,7 @@ seding() {
 
 	backup_files='/\(^[A-Z][A-Z]*'"$tab"'\)/ {
 		bquote;
-	}"
+	}'
 	sed "
 	$backup_files
 	/^$alnums/ {

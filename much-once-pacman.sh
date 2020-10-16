@@ -6,7 +6,7 @@ operate='-S'
 log() {
 	eval "$logging"
 }
-logging='echo ${@+"$@"} >&2'
+logging=:
 n=20
 r=
 OPTIND=1

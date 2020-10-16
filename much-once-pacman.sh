@@ -6,16 +6,18 @@ operate='-S'
 log() {
 	eval "$logging"
 }
-logging=
+logging='echo ${@+"$@"} >&2'
 n=20
+r=
 OPTIND=1
 separately=
 back=
 force=
 RE=${1:-linux}
 test $# -eq 0 || shift
-while getopts n:ldsSf o; do
+while getopts n:ldsSfr: o; do
 	case "$o" in
+        r) r=$OPTARG;;
 	n) n=$OPTARG;;
 	l) operate='-Q';;
 	d) logging=`cat <<\EOL
@@ -34,14 +36,20 @@ l=`sed -n '/[^ 	]/p' <<EOL | wc -l
 $pkgs
 EOL`
 
+r=`2>/dev/null expr -- "$r" : '^\([0-9][0-9]*\)$'` || :
+
+if test -n "$r"
+then :
+else
 # rand()
 #   Returned a floating number which will be greater than or equal to 0,
 #   and less than 1.
 r=`perl -e 'print int($ARGV[0] * rand()), "\n";' $l`
 
-log "$r / $l"
+#log "$r / $l"
 
 test $n -le `expr $l - $r` || r=`expr $r - $n`
+fi
 test $r -ge 1 || r=1
 e=`expr $r + $n`; test $e -lt $l || e=$l
 
@@ -92,4 +100,4 @@ else
 	pacman $operate -ii $pkgs
 fi
 end=`/bin/date '+%s'`
-log "Time:" `expr $end - $start`s
+log `expr $end - $start`

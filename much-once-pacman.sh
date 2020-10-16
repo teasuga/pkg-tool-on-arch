@@ -51,7 +51,8 @@ r=`perl -e 'print int($ARGV[0] * rand()), "\n";' $l`
 test $n -le `expr $l - $r` || r=`expr $r - $n`
 fi
 test $r -ge 1 || r=1
-e=`expr $r + $n`; test $e -lt $l || e=$l
+e=`expr $r + $n`; e=`expr $e - 1`; test $e -lt $l || e=$l
+test $r -le $l || exit 1
 
 # want to get ${n} packages,
 # or just one.

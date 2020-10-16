@@ -27,7 +27,7 @@
     ( i=1; n=20
     while sh ./much-once-pacman.sh '' -r$i -n$n -d
     do i=`expr "$i" + "$n"`
-    done >&2
+    done >&2 >/dev/null
     ) | ( s=0
     while :
     do read num || break

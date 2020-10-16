@@ -24,10 +24,9 @@
     sh ./much-once-pacman.sh '' -n50 -d -S | grep ^Name | wc -l
     # 100 packages, run separately on foreground,
     # and calculate time.
-    ( i=0; n=19
-    while test $i -lt 100
+    ( i=1; n=20
+    while sh ./much-once-pacman.sh '' -r$i -n$n
     do i=`expr "$i" + "$n"`
-    sh ./much-once-pacman.sh '' -r$i -n$n
     done >&2
     ) | ( s=0
     while :

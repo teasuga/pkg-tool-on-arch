@@ -28,7 +28,7 @@
     while test $i -lt 100
     do i=`expr "$i" + "$n"`
     sh ./much-once-pacman.sh '' -r$i -n$n
-    done
+    done >&2
     ) | ( s=0
     while :
     do read num || break

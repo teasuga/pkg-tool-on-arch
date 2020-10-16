@@ -25,8 +25,11 @@
     # 100 packages, run separately on foreground,
     # and calculate time.
     ( i=1; n=20
-    while sh ./much-once-pacman.sh '' -r$i -n$n -d
-    do i=`expr "$i" + "$n"`
+    # Matching packages may be less than 100.
+    # Is it good to abort if that is?
+    while test $i -lt 100
+    do sh ./much-once-pacman.sh '' -r$i -n$n -d
+       i=`expr "$i" + "$n"`
     done 2>&1 >/dev/null
     ) | ( s=0
     while :

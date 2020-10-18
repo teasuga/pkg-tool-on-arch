@@ -135,6 +135,32 @@ while getopts :-: o ; do
 	esac
 done; shift `expr $OPTIND - 1 `
 
+: << EOL
+To fit to limiting command-line (by OS which is described on a book,)
+These are the methods that I think.
+#1 example of command grouping:
+   pacman regex | 
+   {
+   while read p
+   do add to $CHAR_SIZE,
+      if greater than 256
+         info var
+         var= CHAR_SIZE=
+      fi
+      contain p to var or write to out-group     
+   done
+   if var isnt equal to null
+     info var
+   fi
+   }
+#2 get a length of cmdline
+   1. read, expr, += size
+   2. all=, | pacman regex, 
+      loop unless all isn't null:
+         all=, | cut -cN-
+         process=, | cut -c1-N
+   3. sed / perl / awk / wc
+EOL
 if test x"$kind" = xmatch
 then set 2 `pacman $operate -q -s "$@"`; shift
 else :

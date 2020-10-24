@@ -31,12 +31,12 @@ evaluates() {
 	alnums=`echo "$alnums" | sed 's/-//'`
     format=`echo 2 "$2" | sed "
         1s/^2 //;
-        s/$alnums$alnums*/"'\\\$&/g;' \
+        s/$alnums$alnums*/"'\\\$P&/g;' \
       | tr '[a-z]' '[A-Z]'`
     sections=$1
 
 	for s in $sections; do
-		eval "$s="
+		eval "P$s="
 	done
 	while :; do
 		read line || break
@@ -46,7 +46,7 @@ evaluates() {
 '"$format"'
 EOL'
 			for s in $sections; do
-				eval "$s="
+				eval "P$s="
 			done
 			;;
 		*)
@@ -117,7 +117,7 @@ $if_states"'
     s/^.*$//; x; d;
     :words;
     x; G;
-        s/^\([^\n][^\n]*\)\n\(.*\)$/\2='\''\1/;
+        s/^\([^\n][^\n]*\)\n\(.*\)$/P\2='\''\1/;
     '
 }
 

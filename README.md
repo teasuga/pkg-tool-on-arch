@@ -1,8 +1,10 @@
 ## News
-  A bug is.
+  1. No debug yet.
+  2. Enough speed for me.
+  3. One pacman process run with many packages on foreground.
   
 ## A IMPORTANT BUG
-  Optional Deps on multiple lines, so NOT CORRECTLY INFORMATIONS from a function.
+  Fixed: Optional Deps on multiple lines, so NOT CORRECTLY INFORMATIONS from a function.
   
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
@@ -18,9 +20,9 @@
 ## Install them
   $ PATH_DIR=/where/pkg/sit/on ; FUNC_HOME=/where/func_info.sh/sit/on # set variables
 
-  $ install -m755 -t $PATH_DIR ./pkg # to execute on your shell.
+  $ install -Dm755 -t $PATH_DIR ./pkg # to execute on your shell.
 
-  $ install -m644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
+  $ install -Dm644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
 
   $ sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
@@ -51,16 +53,9 @@ $ pkg create [-i] [-oMAKEPKG_OPTIONS] A_NAME
 $ pkg [-fFORMAT] match REGEX... # search packages by regex and format info
 
 $ pkg 'SECTIONS' PACKAGE... # like -f option, but sections in one line from pacman's output
-
-$ pkg v PACKAGE... # like -v option, but version only
-
-$ pkg s PACKAGE... # like -s option, but "Name Version" only
-
-$ pkg p PACKAGE... # like them, but packager only
-
 ## Just do pacman $operate -i $verbosely PACKAGE...
 
-$ pkg info [-v] PACKAGE...
+$ pkg info PACKAGE...
 
 ## from information of local packages.
 
@@ -78,13 +73,13 @@ $ pkg -l 'name#repo ver' linux # from pacman -Qii linux
 
 linux#core 5.8.1.arch1-1
 
-$ pkg -l v systemd # the version of local 'systemd' is
+$ pkg -l version systemd # the version of local 'systemd' is
 
 246.2-1
 
-$ pkg -l info -v linux # do 'pacman -Qi -i linux'
+$ pkg -nsvi -uBackup_files installed pacman # "name version\nbackup-file-1\n..."
 
-$ pkg info linux # do 'pacman -Si linux'
+$ pkg -nsvi info pacman # "name version\n"
 
 $ pkg -f'name#repo ver' match xkb # search regex and format
 

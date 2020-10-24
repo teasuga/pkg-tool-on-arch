@@ -1,9 +1,8 @@
-## What's new (may has a bug)
-   1. Able to get sections over lines,
-   2. Proceed speedy by system(pacman -[QS] PACKAGE...)ing.
-   3. Enough speed for me.
-   4. No debug yet.
-
+## News
+  1. No debug yet.
+  2. Enough speed for me.
+  3. One pacman process run with many packages on foreground.
+  
 ## A IMPORTANTLY BUG IS
    Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
 
@@ -24,8 +23,8 @@
 
 ## Install them
     PATH_DIR=/where/pkg/sit/on ; FUNC_HOME=/where/func_info.sh/sit/on # set variables
-    install -m755 -t $PATH_DIR ./pkg # to execute on your shell.
-    install -m644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
+    install -Dm755 -t $PATH_DIR ./pkg # to execute on your shell.
+    install -Dm644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
     sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
 ## And run on a system
@@ -49,19 +48,14 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Print formatted description of a package.
 
-    # Global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
+global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
 
-    # DO NOT THIS.
     pkg [-fFORMAT] match REGEX... # search packages by regex and format info
-
     pkg 'FORMAT' PACKAGE... # like -f option, but sections in one line from pacman's output
-    pkg v PACKAGE... # like -v option, but version only
-    pkg s PACKAGE... # like -s option, but "Name Version" only
-    pkg p PACKAGE... # like them, but packager only
 
 ## Just do pacman $operate -i $verbosely PACKAGE...
 
-    pkg info [-v] PACKAGE...
+    pkg info PACKAGE...
 
 ## from information of local packages.
 
@@ -69,17 +63,11 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 # Examples
 
-    $ pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
-    $ pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
-    $ pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
-    $ pkg -l 'name#repo ver' linux # from pacman -Qii linux
-    linux#core 5.8.1.arch1-1
-    $ pkg -l v systemd # the version of local 'systemd' is
-    246.2-1
-    $ pkg -l info -v linux # do 'pacman -Qi -i linux'
-    $ pkg info linux # do 'pacman -Si linux'
-    
-    # DO NOT THIS.
-    $ pkg -f'name#repo ver' match xkb # search regex and format
-    xorg-setxkbmap#extra 1.3.2-2
-    ...
+    pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
+    pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
+    pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
+    pkg -l 'name#repo ver' linux # from pacman -Qii linux
+    pkg -l version systemd # the version of local 'systemd'.
+    pkg -nsvi -uBackup_files installed pacman # "name version\nbackup-file-1\n..."
+    pkg -nsvi info pacman # "name version\n"
+    pkg -f'name#repo ver' match xkb # search regex and format

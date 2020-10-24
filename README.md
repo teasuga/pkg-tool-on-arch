@@ -1,14 +1,15 @@
 ## What's new (may has a bug)
    1. Able to get sections over lines,
-   2. Proceed speedy (by being "pacman -Sii"s on background)
-   3. (with the branch "format_info.sh"'s).
+   2. Proceed speedy by system(pacman -[QS] PACKAGE...)ing.
+   3. Enough speed for me.
+   4. No debug yet.
 
 ## A IMPORTANTLY BUG IS
    Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
 
-   MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.
+   Fixed: MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.
    
-   This bug will fixed by limiting processes which system() "pacman".
+   Limited: This bug will fixed by limiting processes which system() "pacman".
 
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)

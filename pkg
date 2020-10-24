@@ -1,4 +1,16 @@
 #!/bin/sh
+# Synopsis:
+#    pkg [-C] [-l|-r] FORMAT PACKAGE...
+#    pkg [-C] [-l|-r] FORMAT_OPTIONS info PACKAGE...
+#    pkg [-C] FORMAT_OPTIONS installed PACKAGE...
+#    pkg OPTIONS [ edit | create ] PACKAGE...
+#
+# Format Options:
+#    fFORMAT | { uFORMAT | nvdpi } ...
+#
+# Editing / Creation Options:
+#    i | b | n | oMAKEPKG_OPTS
+#
 
 #fix this line if move to a system.
 func_home="`dirname \"$0\"`"

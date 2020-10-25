@@ -11,7 +11,7 @@
 # Editing / Creation Options:
 #    i | b | n | oMAKEPKG_OPTS
 #
-
+ 
 #fix this line if move to a system.
 func_home="`dirname \"$0\"`"
 

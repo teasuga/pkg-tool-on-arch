@@ -48,18 +48,16 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Print formatted description of a package.
 
-global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
+formating options:  -s space, -n name, -v version, -d build_dates, -p packager, -i line feed, -f explict FORMAT is, -u add to FORMAT instead.
 
-    pkg [-fFORMAT] match REGEX... # search packages by regex and format info
-    pkg 'FORMAT' PACKAGE... # like -f option, but sections in one line from pacman's output
+other options: -C to copy to clipboad, -l local packages, -r from packages synced with remote.
 
-## Just do pacman $operate -i $verbosely PACKAGE...
-
+    pkg 'FORMAT' PACKAGE... # same to, pkg -f'FORMAT' info PACKAGE...
+    # you must specify formating options to below three cmds
+    # or change default FORMAT in "pkg".
+    pkg match REGEX... # search packages by regex and format info
     pkg info PACKAGE...
-
-## from information of local packages.
-
-    pkg [-Csnvd] [-fFORMAT] installed PACKAGE...
+    pkg installed PACKAGE... # info of local packages
 
 # Examples
 

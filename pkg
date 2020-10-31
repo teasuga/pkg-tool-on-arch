@@ -1,5 +1,17 @@
 #!/bin/sh
-
+# Synopsis:
+#    pkg [-C] [-l|-r] FORMAT PACKAGE...
+#    pkg [-C] [-l|-r] FORMAT_OPTIONS info PACKAGE...
+#    pkg [-C] FORMAT_OPTIONS installed PACKAGE...
+#    pkg OPTIONS [ edit | create ] PACKAGE...
+#
+# Format Options:
+#    fFORMAT | { uFORMAT | nvdpi } ...
+#
+# Editing / Creation Options:
+#    i | b | n | oMAKEPKG_OPTS
+#
+ 
 #fix this line if move to a system.
 func_home="`dirname \"$0\"`"
 
@@ -8,27 +20,46 @@ func_home="`dirname \"$0\"`"
 # change this to your like.
 script_home="$HOME/scripts"
 
+#bp=
 help() {
 	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
 }
+info() {
+	# Getting much packages needs to fix outside of function
+	# like:
+	#   info "$@"
+	# and:
+	#   info() {
+	#     pacman -S -ii "$@" | format_info
+    #   }
+	# * Merging have been strange, because git is difficult for me.
+	#   After "unusable-shortcut" merged, will commit.
+	( pacman ${operate} -ii $opts "$@" | format_info "$format" )
+	#bp=$!
+}
 
 trap 'exit 0' 1 2 3 15
+trap 'wait' 0
 
 operate='-S'
-formats="name#repo ver"
+format=
 opts= # passed either to pacman or pkgfile
 cat=/bin/cat
-while getopts lrsvndf:C o; do
+while getopts lrf:svndpu:iC o; do
 	case "$o" in
 	r) operate='-S';;
 	l) operate='-Q';;
 	f) # look above function "format_info".
-		formats="$OPTARG"
+		format="$OPTARG"
 	;;
-	s) formats="name ver";;
-	v) formats="$formats Version" ;;
-	n) formats="$formats Name";;
-	d) formats="$formats Build";;
+	s) format="${format} ";;
+	v) format="${format}Version" ;;
+	n) format="${format}Name";;
+	d) format="${format}Build_date";;
+	p) format="${format}Packager";;
+	u) format="${format}$OPTARG";;
+	i) format="${format}
+";;
 	C) #copy to clip board by using xsel.
 	   cat=
 	;;
@@ -43,21 +74,10 @@ OPTIND=1
 
 case "$kind" in
 installed)
+	# Is this not need ?
 	operate='-Q'
-	for f in "$@" ; do
-		eval 'pacman ${operate} -ii "$f" | align_sections '"$formats"
-	done | ${cat:-xsel -i -b}
-exit 0;;
-remove)
-	while getopts :-: opt; do
-		case "$opt" in
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	eval "exec pacman -R $opts "'"$@"'
-exit 0;;
+	SYNOPSIS="installed PACKAGE..."
+;;
 create)
 	careful= reporting= installing= builddir=
 	makepkg_opts=-srCf
@@ -108,86 +128,27 @@ edit)
 	done
 exit 0;;
 match)
-	SYNOPSIS="match [-snv] pacmans_arg..."
-	opts=-s
-	while getopts :h-: o; do
-		case "$o$OPTARG" in
-			h) echo >&2 "$SYNOPSIS"; exit 1;;
-			-) opts="$opts --$OPTARG";;
-			*) opts="$opts -$OPTARG";;
-		esac
-	done; shift `expr $OPTIND - 1`
-
-	for r in "$@"
-	do
-		for p in `pacman ${operate} -q $opts "$r"`
-		do
-			pacman ${operate} -ii "$p" | align_sections "$formats"
-		done
-	done | ${cat:-xsel -i -b}
-exit 0;;
-own)
-	while getopts :-: o ; do
-		case "$o" in
-		-) opts="$opts --$o";;
-		*) opts="$opts -$o";;
-		esac
-	done; shift `expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Q $opts -o "$f"
-		else
-			pkgfile $opts "$f"
-		fi
-	done
-exit 0;;
-contain)
-	opt=
-	while getopts :S-: opt; do
-		case "$opt" in
-		S) echo "S not supported." >&2; exit 1;; # dummy for getting other pacman opts.
-		-) opts="$opts --$OPTARG";;
-		*) opts="$opts -$OPTARG";;
-		esac
-		opts="$opts -$OPTARG"
-	done; shift ` expr $OPTIND - 1`
-	for f in "$@"; do
-		if test "x-Q" = "x${operate}"; then
-		### default using pacman
-			pacman -Ql $opts "$f"
-		else
-			pkgfile -l $opts "$f"
-		fi
-	done
-exit 0;;
+    SYNOPSIS="match REGEX..."
+;;
 info)
-	verbose=
-	while getopts :v o ; do
-		case "$o" in
-		v)   verbose=-i;;
-		esac
-	done; shift `expr $OPTIND - 1`
-			
-	for f in "$@"
-	do
-		pacman $operate -i $verbose "$f"
-	done
-exit 0;;
-v*) kind=version;;
-s*) kind='repo/name version';; # short format.
-u*) kind=url;;
-p*) kind=packager;;
-*)  : ;;
+    SYNOPSIS="info PACKAGE..."
+;;
+*)  
+	SYNOPSIS="'FORMAT' PACKAGE..."
+	format=$kind
+;;
 esac
 
 while getopts :-: o ; do
 	case "$o" in
+	h) echo >&2 "$0 [-rl] [-snvpdul] [-fFORMAT] [-C] $SYNOPSIS"; exit 0;;
 	-) opts="$opts --$OPTARG";;
 	*) opts="$opts -$OPTARG";;
 	esac
 done; shift `expr $OPTIND - 1 `
 
-for p in "$@"; do
-	pacman ${operate} -ii $opts "$p" | align_sections "$kind"
-done | ${cat:-xsel -i -b}
+if test x"$kind" = xmatch
+then set 2 `pacman $operate -q -s "$@"`; shift
+else :
+fi
+info "$@" | ${cat:-xsel -i -b}

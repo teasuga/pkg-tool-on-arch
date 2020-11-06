@@ -25,7 +25,7 @@
     PATH_DIR=/where/pkg/sit/on ; FUNC_HOME=/where/func_info.sh/sit/on # set variables
     install -Dm755 -t $PATH_DIR ./pkg # to execute on your shell.
     install -Dm644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
-    sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
+    sed -i '/^func_home=/s|=.*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
 ## And run on a system
     pkg 'version @ build_date' systemd
@@ -62,7 +62,7 @@ other options: -C to copy to clipboad, -l local packages, -r from packages synce
 # Examples
 
     pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
-    pkg create -i recent_log # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
+    pkg create -i recent_log # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.*), and install it.
     # a optional line-feed is printed by some versions of "format_info()".
     pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
     pkg -l 'name#repo ver' linux # from pacman -Qii linux

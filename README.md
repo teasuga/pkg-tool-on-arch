@@ -16,7 +16,7 @@
 
 ## Run locally
 
-    git clone --branch new-format_info.sh https://github.com/teasuga/pkg-tool-on-arch.git
+    git clone --branch fall.20 https://github.com/teasuga/pkg-tool-on-arch.git
     cd pkg-tool-on-arch
     sh ./pkg 'name ver (build_date)
         desc' pacman
@@ -48,7 +48,7 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Print formatted description of a package.
 
-formating options:  -s space, -n name, -v version, -d build_dates, -p packager, -i line feed, -f explict FORMAT is, -u add to FORMAT instead.
+formating options:  -s space, -n name, -v version, -d build_dates, -p packager, -i line feed, -f explicit FORMAT is, -u add to FORMAT instead.
 
 other options: -C to copy to clipboad, -l local packages, -r from packages synced with remote.
 
@@ -62,7 +62,7 @@ other options: -C to copy to clipboad, -l local packages, -r from packages synce
 # Examples
 
     pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
-    pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
+    pkg create -i recent_log # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
     # a optional line-feed is printed by some versions of "format_info()".
     pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
     pkg -l 'name#repo ver' linux # from pacman -Qii linux

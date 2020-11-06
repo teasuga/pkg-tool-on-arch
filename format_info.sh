@@ -5,8 +5,11 @@ lower=`tr '[A-Z]' '[a-z]' << EOL
 $upper
 EOL`
 alnums='-A-Za-z0-9_'
+alnums_b='-A-Za-z0-9_'
 non_alnums="[^$alnums]"
+non_alnums_s="[^$alnums_b]"
 alnums="[$alnums]"
+alnums_s="[$alnums_b]"
 
 tab=`echo x | tr 'x' '\011'`
 unknown_values() {
@@ -27,14 +30,14 @@ unknown_values() {
 	' | sort -u
 }
 evaluates() {
-    format=`echo 2 "$2" | sed "
-        1s/^2 //;
-        s/$alnums$alnums*/"'\\\$&/g;' \
-      | tr '[a-z-]' '[A-Z_]'`
+    format=`echo 3 "$2" | sed "
+        1s/^3 //;
+        s/$alnums_s$alnums_s*/"'\\\$P&/g;' \
+      | tr '[a-z]' '[A-Z]'`
     sections=$1
 
 	for s in $sections; do
-		eval "$s="
+		eval "P$s="
 	done
 	while :; do
 		read line || break
@@ -44,7 +47,7 @@ evaluates() {
 '"$format"'
 EOL'
 			for s in $sections; do
-				eval "$s="
+				eval "P$s="
 			done
 			;;
 		*)
@@ -113,12 +116,12 @@ $if_states"'
     s/^.*$//; x; d;
     :words;
     x; G;
-        s/^\([^\n][^\n]*\)\n\(.*\)$/\2='\''\1/;
+        s/^\([^\n][^\n]*\)\n\(.*\)$/P\2='\''\1/;
     '
 }
 
 format_info() {
-	sections=`awk 'BEGIN {RS="'"$non_alnums"'"} { print $0 }' << EOL | tr '[a-z-\n \t]' '[A-Z_   ]'
+	sections=`awk 'BEGIN {RS="'"$non_alnums_s"'"} { print $0 }' << EOL | tr '[a-z\n]' '[A-Z ]'
 $1
 EOL
 `

@@ -1,9 +1,14 @@
-## What's new (may has a bug)
-   1. Fast than simultaneously do same thing.
-   2. Will merge few days later and also fix "pkg".
-   
+## News
+  1. No debug yet.
+  2. Enough speed for me.
+  3. One pacman process run with many packages on foreground.
+  
 ## A IMPORTANTLY BUG IS
-   Fixed: (MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.)
+   Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
+
+   Fixed: MAY FREEZE YOUR PC if you specify 'match' argument with parameters because many pacman processes will run simultaneously.
+   
+   Limited: This bug will fixed by limiting processes which system() "pacman".
 
 ## Files
   1. pkg (creation of package which contains one script, editing its script, print a package's brief in one line by using format_info.sh.)
@@ -18,8 +23,8 @@
 
 ## Install them
     PATH_DIR=/where/pkg/sit/on ; FUNC_HOME=/where/func_info.sh/sit/on # set variables
-    install -m755 -t $PATH_DIR ./pkg # to execute on your shell.
-    install -m644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
+    install -Dm755 -t $PATH_DIR ./pkg # to execute on your shell.
+    install -Dm644 -t $FUNC_HOME ./format_info.sh # sourced format_info.sh from pkg
     sed -i '/^func_home=/s|=.\*|='"$FUNC_HOME"'|' "$PATH_DIR/pkg" # set func_home variable to above one
 
 ## And run on a system
@@ -43,37 +48,25 @@ Global options: [-l|-r] (local, from remote database) , -f specify formats
 
 ## Print formatted description of a package.
 
-    # Global options: -C to copy to clipboad , -s short format (Name Version${NEWLINE}Description), -n add name to formats , -v add version to formats , -d add build to formats (may be Build Date).
+formating options:  -s space, -n name, -v version, -d build_dates, -p packager, -i line feed, -f explict FORMAT is, -u add to FORMAT instead.
 
-    # DO NOT THIS.
-    pkg [-fFORMAT] match REGEX... # search packages by regex and format info
+other options: -C to copy to clipboad, -l local packages, -r from packages synced with remote.
 
-    pkg 'FORMAT' PACKAGE... # like -f option, but sections in one line from pacman's output
-    pkg v PACKAGE... # like -v option, but version only
-    pkg s PACKAGE... # like -s option, but "Name Version" only
-    pkg p PACKAGE... # like them, but packager only
-
-## Just do pacman $operate -i $verbosely PACKAGE...
-
-    pkg info [-v] PACKAGE...
-
-## from information of local packages.
-
-    pkg [-Csnvd] [-fFORMAT] installed PACKAGE...
+    pkg 'FORMAT' PACKAGE... # same to, pkg -f'FORMAT' info PACKAGE...
+    # you must specify formating options to below three cmds
+    # or change default FORMAT in "pkg".
+    pkg match REGEX... # search packages by regex and format info
+    pkg info PACKAGE...
+    pkg installed PACKAGE... # info of local packages
 
 # Examples
 
-    $ pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
-    $ pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
-    $ pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
-    $ pkg -l 'name#repo ver' linux # from pacman -Qii linux
-    linux#core 5.8.1.arch1-1
-    $ pkg -l v systemd # the version of local 'systemd' is
-    246.2-1
-    $ pkg -l info -v linux # do 'pacman -Qi -i linux'
-    $ pkg info linux # do 'pacman -Si linux'
-    
-    # DO NOT THIS.
-    $ pkg -f'name#repo ver' match xkb # search regex and format
-    xorg-setxkbmap#extra 1.3.2-2
-    ...
+    pkg edit recent_log # creates $HOME/scripts/recent_log/recent_log
+    pkg create -i recent_log.pl # create a package of it ($HOME/scripts/recent_log/recent_log-1-1.pkg.tar.\*), and install it.
+    # a optional line-feed is printed by some versions of "format_info()".
+    pkg -C 'name: build' linux # copy to clipboad that "linux: Thu 13 Aug 2020 03:50:43 AM JS"
+    pkg -l 'name#repo ver' linux # from pacman -Qii linux
+    pkg -l version systemd # the version of local 'systemd'.
+    pkg -nsvi -uBackup_files installed pacman # "name version\nbackup-file-1\n..."
+    pkg -nsvi info pacman # "name version\n"
+    pkg -f'name#repo ver' match xkb # search regex and format

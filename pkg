@@ -1,0 +1,154 @@
+#!/bin/sh
+# Synopsis:
+#    pkg [-C] [-l|-r] FORMAT PACKAGE...
+#    pkg [-C] [-l|-r] FORMAT_OPTIONS info PACKAGE...
+#    pkg [-C] FORMAT_OPTIONS installed PACKAGE...
+#    pkg OPTIONS [ edit | create ] PACKAGE...
+#
+# Format Options:
+#    fFORMAT | { uFORMAT | nvdpi } ...
+#
+# Editing / Creation Options:
+#    i | b | n | oMAKEPKG_OPTS
+#
+ 
+#fix this line if move to a system.
+func_home="`dirname \"$0\"`"
+
+. "$func_home/format_info.sh"
+
+# change this to your like.
+script_home="$HOME/scripts"
+
+#bp=
+help() {
+	sed -n '/^[^#]/q; p' -- "$0"; exit ${1:-1}
+}
+info() {
+	# Getting much packages needs to fix outside of function
+	# like:
+	#   info "$@"
+	# and:
+	#   info() {
+	#     pacman -S -ii "$@" | format_info
+    #   }
+	# * Merging have been strange, because git is difficult for me.
+	#   After "unusable-shortcut" merged, will commit.
+	( pacman ${operate} -ii $opts "$@" | format_info "$format" )
+	#bp=$!
+}
+
+trap 'exit 0' 1 2 3 15
+trap 'wait' 0
+
+operate='-S'
+format=
+opts= # passed either to pacman or pkgfile
+cat=/bin/cat
+while getopts lrf:svndpu:iC o; do
+	case "$o" in
+	r) operate='-S';;
+	l) operate='-Q';;
+	f) # look above function "format_info".
+		format="$OPTARG"
+	;;
+	s) format="${format} ";;
+	v) format="${format}Version" ;;
+	n) format="${format}Name";;
+	d) format="${format}Build_date";;
+	p) format="${format}Packager";;
+	u) format="${format}$OPTARG";;
+	i) format="${format}
+";;
+	C) #copy to clip board by using xsel.
+	   cat=
+	;;
+	*) help;;
+	esac
+done
+shift `expr $OPTIND - 1`
+
+kind=$1; shift || help 1
+
+OPTIND=1
+
+case "$kind" in
+installed)
+	# Is this not need ?
+	operate='-Q'
+	SYNOPSIS="installed PACKAGE..."
+;;
+create)
+	careful= reporting= installing= builddir=
+	makepkg_opts=-srCf
+	prepare_installing=''
+	install_pkg='/bin/makepkg -i' #'/bin/sudo /bin/pacman -U "$@"'
+	while getopts :o:ibn o; do
+		case "$o" in
+		n) noconfirm=--noconfirm;;
+		b) builddir=1;;
+		o) makepkg_opts=$OPTARG;;
+		i) installing=1;;
+		*) echo "[-o MAKEPKG_OPTS_EVALED_LATER] [-e]"; exit 1;;
+		esac
+	done; shift `expr $OPTIND - 1`
+	for p in "$@"
+	do
+		test -z "$builddir" || export BUILDDIR="$script_home/$p/build"
+		cd "$script_home/$p"
+		tar -cf "$p".tar.zst "$p"
+		cat << EOL > PKGBUILD
+pkgname=mytool-$p
+pkgver=1
+pkgrel=1
+source=($p.tar.zst)
+arch=(any)
+url=
+desc=
+depends=()
+
+package() {
+EOL
+		cat << EOL >> PKGBUILD
+	install -m755 -Dt "\$pkgdir/usr/local/bin" $p
+}
+EOL
+		updpkgsums
+		eval "makepkg $makepkg_opts"
+	done
+	test -n "$installing" || exit 0
+	for n in "$@"; do
+		cd "$script_home/$n"
+		eval "$install_pkg $noconfirm"
+	done
+exit 0;;
+edit)
+	for p in "$@"; do
+		$EDITOR "$script_home/$p/$p"
+	done
+exit 0;;
+match)
+    SYNOPSIS="match REGEX..."
+;;
+info)
+    SYNOPSIS="info PACKAGE..."
+;;
+*)  
+	SYNOPSIS="'FORMAT' PACKAGE..."
+	format=$kind
+;;
+esac
+
+while getopts :-: o ; do
+	case "$o" in
+	h) echo >&2 "$0 [-rl] [-snvpdul] [-fFORMAT] [-C] $SYNOPSIS"; exit 0;;
+	-) opts="$opts --$OPTARG";;
+	*) opts="$opts -$OPTARG";;
+	esac
+done; shift `expr $OPTIND - 1 `
+
+if test x"$kind" = xmatch
+then set 2 `pacman $operate -q -s "$@"`; shift
+else :
+fi
+info "$@" | ${cat:-xsel -i -b}

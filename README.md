@@ -16,6 +16,7 @@ There is my tool 'pkg' on branches: "fall.20".
 ## current working directory. And run:
 # for i in 1 2 3; do sh ./abort.sh $i; done
 
+set -e
 case "${1:-1}" in 1)
   false && true; echo 1
 ;; 2)

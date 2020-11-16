@@ -1,5 +1,5 @@
 ## News
-   1. A git is not friendly to me. I'm deleted each files on the each branches.
+   1. A git is not friendly to me. I'm deleted the files on each branches.
 
    2. So if I updates the files on the branches, I must solve that when every merging into any branch as this branch conflicted.
 

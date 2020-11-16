@@ -5,7 +5,7 @@ lower=`tr '[A-Z]' '[a-z]' << EOL
 $upper
 EOL`
 alnums='-A-Za-z0-9_'
-alnums_b='-A-Za-z0-9_'
+alnums_b='A-Za-z0-9_'
 non_alnums="[^$alnums]"
 non_alnums_s="[^$alnums_b]"
 alnums="[$alnums]"

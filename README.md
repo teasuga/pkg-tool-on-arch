@@ -1,7 +1,9 @@
 ## News
-  1. No debug yet.
-  2. Enough speed for me.
-  3. One pacman process run with many packages on foreground.
+   1. A git is not friendly to me. I'm deleted each files on the each branches.
+
+   2. So if I updates the files on the branches, I must solve that when every merging into any branch as this branch conflicted.
+
+   3. Further, not correctly usage of itself in the script "pkg".
   
 ## A IMPORTANTLY BUG IS
    Fixed: (Optional Deps on multiple lines, so COMPLETELY NO CORRECT INFORMATION from output of this script.)
